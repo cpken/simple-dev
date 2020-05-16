@@ -13,6 +13,17 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->name('api.v1.')->namespace('Api')->group(function() {
+
+    Route::post('login', 'AuthorizationsController@login');
+    Route::group([
+        'middleware' => 'jwt.auth',
+        'prefix' => 'auth'
+    ], function ($router) {
+        Route::post('logout', 'AuthorizationsController@logout');
+        Route::post('user_info', 'AuthorizationsController@userInfo');
+    });
+    Route::middleware('jwt.auth')->group(function ($router) {
+       //这里存放需要通过验证的路由
+    });
 });
